@@ -43,6 +43,11 @@
             bottom: 1.5%;
             left: 20.5%;
         }
+
+        video {
+            object-fit: fill;
+        }
+
         @keyframes video-animation {
             from { right: 100%; transform: rotate(-9deg); }
             to { right: -71%; transform: none; }
@@ -53,6 +58,7 @@
         }
         #animating-video {
             width: 70.3%;
+            height: auto;
             right: 100%;
             top: 35.6%;
             transform: rotate(-9deg);
@@ -61,6 +67,7 @@
         }
         #animating-quote {
             width: 65%;
+            height: auto;
             left: 100%;
             top: 55%;
             transform: rotate(16deg);
@@ -134,6 +141,7 @@
             animatingVideo.classList.add('animation-video');
             animatingQuote.classList.add('animation-quote');
             animatingVideo.addEventListener('loadeddata', updateAnimation);
+            animatingVideo.load();
         }
 
         var manager;
@@ -143,17 +151,18 @@
             manager.on('tap', function (event) {
                 window.location = 'mainmap.html';
             });
+            document.getElementById('bg-video').play();
             performAnimations();
         };
     </script>
 </head>
 <body>
-    <video id="bg-video" autoplay preload="auto" poster="../resources/attract-screen/background-vertical-1-poster.png" loop>
+    <video id="bg-video" loop preload="auto" poster="../resources/attract-screen/background-vertical-1-poster.jpg">
         <source src="../resources/attract-screen/background-vertical-1.mp4" type="video/mp4">
     </video>
     <img id="title-image" src="../resources/attract-screen/title.png" alt="Lincoln's Eighth Circuit Map">
     <video id="animating-video" class="animation-content" preload="auto" poster="../resources/attract-screen/subvideo-1-poster.jpg">
-        <source src="../../raw-resources/subvideo-1.mp4" type="video/mp4">
+        <source src="../resources/attract-screen/subvideo-1.mp4" type="video/mp4">
     </video>
     <img id="animating-quote" class="animation-content" src="../resources/attract-screen/quote-1.png">
     <img id="touch-prompt" src="../resources/attract-screen/touchtobegin.png" alt="Touch to Begin">
