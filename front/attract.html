@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Attract Screen</title>
     <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, initial-scale=1">
+    <script src="../resources/libraries/hammer.js"></script>
     <style>
         body {
             height: 100%;
@@ -135,12 +136,12 @@
             animatingVideo.addEventListener('loadeddata', updateAnimation);
         }
 
+        var manager;
+
         window.onload = function () {
-            document.body.addEventListener('touchstart', function () {
-                window.location.href = 'mainmap.html';
-            });
-            document.body.addEventListener('click', function () {
-                window.location.href = 'mainmap.html';
+            manager = new Hammer.Manager(document.body);
+            manager.on('tap', function (event) {
+                window.location = 'mainmap.html';
             });
             performAnimations();
         };
@@ -152,7 +153,7 @@
     </video>
     <img id="title-image" src="../resources/attract-screen/title.png" alt="Lincoln's Eighth Circuit Map">
     <video id="animating-video" class="animation-content" preload="auto" poster="../resources/attract-screen/subvideo-1-poster.jpg">
-        <source src="../resources/attract-screen/subvideo-1.mp4" type="video/mp4">
+        <source src="../../raw-resources/subvideo-1.mp4" type="video/mp4">
     </video>
     <img id="animating-quote" class="animation-content" src="../resources/attract-screen/quote-1.png">
     <img id="touch-prompt" src="../resources/attract-screen/touchtobegin.png" alt="Touch to Begin">
