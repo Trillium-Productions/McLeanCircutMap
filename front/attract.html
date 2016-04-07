@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attract Screen</title>
+    <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, initial-scale=1">
+    <style>
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            background-color: red;
+        }
+        #bg-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            z-index: -1;
+        }
+        img {
+            display: block;
+            position: fixed;
+            z-index: 1;
+        }
+        #title-image {
+            top: 0;
+            width: 100%;
+            height: auto;
+            margin: 0;
+        }
+        #touch-prompt {
+            width: 55%;
+            height: auto;
+            bottom: 4%;
+            left: 22.5%;
+        }
+        #attribution {
+            width: 59%;
+            height: auto;
+            bottom: 1.5%;
+            left: 20.5%;
+        }
+        @keyframes video-animation {
+            from { right: 100%; transform: rotate(-9deg); }
+            to { right: -71%; transform: none; }
+        }
+        @keyframes quote-animation {
+            from { left: 100%; transform: rotate(16deg); }
+            to { left: -61.4%; transform: none; }
+        }
+        #animating-video {
+            width: 70.3%;
+            right: 100%;
+            top: 35.6%;
+            transform: rotate(-9deg);
+            transform-origin: bottom right;
+            border: solid black;
+        }
+        #animating-quote {
+            width: 65%;
+            left: 100%;
+            top: 55%;
+            transform: rotate(16deg);
+            transform-origin: bottom left;
+        }
+        .animation-content {
+            position: absolute;
+            animation-timing-function: cubic-bezier(0,.88,1,0);
+            animation-iteration-count: 1;
+        }
+        .animation-video {
+            animation-name: video-animation;
+        }
+        .animation-quote {
+            animation-name: quote-animation;
+        }
+    </style>
+    <script>
+        var ANIMATION_LOOP_INDEX = 0;
+
+        const ANIMATION_VIDEO_SOURCES = [
+            '../resources/attract-screen/subvideo-1.mp4',
+            '../resources/attract-screen/subvideo-2.mp4',
+            '../resources/attract-screen/subvideo-3.mp4',
+            '../resources/attract-screen/subvideo-2.mp4'
+        ];
+
+        const ANIMATION_VIDEO_POSTERS = [
+            '../resources/attract-screen/subvideo-1-poster.jpg',
+            '../resources/attract-screen/subvideo-2-poster.jpg',
+            '../resources/attract-screen/subvideo-3-poster.jpg',
+            '../resources/attract-screen/subvideo-2-poster.jpg'
+        ];
+
+        const ANIMATION_QUOTE_SOURCES = [
+            '../resources/attract-screen/quote-1.png',
+            '../resources/attract-screen/quote-2.png',
+            '../resources/attract-screen/quote-3.png',
+            '../resources/attract-screen/quote-4.png'
+        ];
+
+        var animatingVideo;
+        var animatingQuote;
+
+        function continueAnimations() {
+            animatingVideo.classList.remove('animation-video');
+            animatingQuote.classList.remove('animation-quote');
+            ANIMATION_LOOP_INDEX = (ANIMATION_LOOP_INDEX + 1) % 4;
+            animatingVideo.src = ANIMATION_VIDEO_SOURCES[ANIMATION_LOOP_INDEX];
+            animatingVideo.poster = ANIMATION_VIDEO_POSTERS[ANIMATION_LOOP_INDEX];
+            animatingQuote.src = ANIMATION_QUOTE_SOURCES[ANIMATION_LOOP_INDEX];
+            animatingVideo.load();
+        }
+
+        function updateAnimation() {
+            animatingQuote.style.animationDuration = animatingVideo.style.animationDuration = animatingVideo.duration + 's';
+            animatingVideo.classList.add('animation-video');
+            animatingQuote.classList.add('animation-quote');
+        }
+
+        function beginAnimations() {
+            animatingVideo.play();
+        }
+
+        function performAnimations() {
+            animatingVideo = document.getElementById('animating-video');
+            animatingQuote = document.getElementById('animating-quote');
+            animatingVideo.addEventListener('webkitAnimationEnd', continueAnimations);
+            animatingVideo.addEventListener('webkitAnimationStart', beginAnimations);
+            animatingQuote.style.animationDuration = animatingVideo.style.animationDuration = animatingVideo.duration + 's';
+            animatingVideo.classList.add('animation-video');
+            animatingQuote.classList.add('animation-quote');
+            animatingVideo.addEventListener('loadeddata', updateAnimation);
+        }
+
+        window.onload = function () {
+            document.body.addEventListener('touchstart', function () {
+                window.location.href = 'mainmap.html';
+            });
+            document.body.addEventListener('click', function () {
+                window.location.href = 'mainmap.html';
+            });
+            performAnimations();
+        };
+    </script>
+</head>
+<body>
+    <video id="bg-video" autoplay preload="auto" poster="../resources/attract-screen/background-vertical-1-poster.png" loop>
+        <source src="../resources/attract-screen/background-vertical-1.mp4" type="video/mp4">
+    </video>
+    <img id="title-image" src="../resources/attract-screen/title.png" alt="Lincoln's Eighth Circuit Map">
+    <video id="animating-video" class="animation-content" preload="auto" poster="../resources/attract-screen/subvideo-1-poster.jpg">
+        <source src="../resources/attract-screen/subvideo-1.mp4" type="video/mp4">
+    </video>
+    <img id="animating-quote" class="animation-content" src="../resources/attract-screen/quote-1.png">
+    <img id="touch-prompt" src="../resources/attract-screen/touchtobegin.png" alt="Touch to Begin">
+    <img id="attribution" src="../resources/attract-screen/attribution.png"
+         alt="Lincoln recreations courtesy of WILL-TV / Illinois Public Media">
+</body>
+</html>
