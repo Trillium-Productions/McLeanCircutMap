@@ -6,21 +6,12 @@
     <title>Central Map Page</title>
     <style>
         body {
-            background-color: #cdada4;
+            background: linear-gradient(to bottom right, #a49cc1, #d99c76);
             overflow: hidden;
             width: 100vw;
             height: 100vh;
             left: 0;
             top: 0;
-        }
-        #bkg-img {
-            position: absolute;
-            display: block;
-            z-index: -1000;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
         }
         #total-content {
             position: fixed;
@@ -77,16 +68,31 @@
             width: 51.1%;
         }
     </style>
+    <script>
+        // TODO: enumeration for year
+        // TODO: fade-able image object
+        // TODO: compile coordinates for things
+        // TODO: get separate images and coordinates per county
+        // TODO: enumeration for county
+        // TODO: object for representation of counties
+        // TODO: way to crossfade text in arrow without crossfading arrow
+    </script>
 </head>
 <body>
-    <img id="bkg-img" src="../resources/main-maps-screen/background.png">
     <div id="total-content">
         <div id="top-content">
             <img id="top-title" src="../resources/main-maps-screen/title-text.png">
             <img id="map-bkg" src="../resources/main-maps-screen/il-bkg.png">
-            <img id="poster" src="../resources/main-maps-screen/poster.png">
+            <img id="poster" src="../resources/main-maps-screen/poster.png" onclick="onPosterClick()">
+            <script>
+                function onPosterClick() {
+                    // TODO: animate hand back and forth
+                    // TODO: animate transition to bottom content
+                }
+            </script>
             <img id="pointing-hand" src="../resources/main-maps-screen/hand.png">
             <img id="time-slider" src="../resources/main-maps-screen/slider.png">
+            <!-- TODO: responsive divs with dragover defined at each tick -->
             <img id="graph-title" src="../resources/main-maps-screen/graph-title.png">
             <img id="graph-main" src="../resources/main-maps-screen/graph-bkg.png">
         </div>
