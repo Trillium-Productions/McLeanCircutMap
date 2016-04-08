@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <title>Attract Screen</title>
     <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, initial-scale=1">
-    <script src="../resources/libraries/hammer.js"></script>
     <style>
         body {
-            height: 100%;
-            width: 100%;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
             margin: 0;
             background-color: red;
         }
@@ -52,10 +52,12 @@
             from { right: 100%; transform: rotate(-9deg); }
             to { right: -71%; transform: none; }
         }
+
         @keyframes quote-animation {
             from { left: 100%; transform: rotate(16deg); }
             to { left: -61.4%; transform: none; }
         }
+
         #animating-video {
             width: 70.3%;
             height: auto;
@@ -144,20 +146,16 @@
             animatingVideo.load();
         }
 
-        var manager;
-
         window.onload = function () {
-            manager = new Hammer.Manager(document.body);
-            manager.on('tap', function (event) {
+            document.body.addEventListener('click', function () {
                 window.location = 'mainmap.html';
             });
-            document.getElementById('bg-video').play();
             performAnimations();
         };
     </script>
 </head>
 <body>
-    <video id="bg-video" loop preload="auto" poster="../resources/attract-screen/background-vertical-1-poster.jpg">
+    <video id="bg-video" loop preload="auto" poster="../resources/attract-screen/background-vertical-1-poster.jpg" autoplay>
         <source src="../resources/attract-screen/background-vertical-1.mp4" type="video/mp4">
     </video>
     <img id="title-image" src="../resources/attract-screen/title.png" alt="Lincoln's Eighth Circuit Map">
