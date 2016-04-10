@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width height=device-height user-scalable=false">
     <title>Central Map Page</title>
+    <link rel="stylesheet" href="../resources/libraries/jquery-ui.css">
+    <script src="../resources/libraries/jquery-2.2.2.js"></script>
+    <script src="../resources/libraries/jquery-ui.js"></script>
     <style>
         body {
             background: linear-gradient(to bottom right, #a49cc1, #d99c76);
@@ -14,19 +17,25 @@
             top: 0;
         }
         #total-content {
-            position: fixed;
-            width: 100%;
-            height: 200%;
+            position: absolute;
+            width: 200vw;
+            height: 100vh;
             background-color: transparent;
             left: 0;
             top: 0;
         }
         #top-content, #bottom-content {
-            position: relative;
-            width: 100%;
+            position: absolute;
+            width: 100vw;
             height: 100vh;
             background-color: transparent;
+            top: 0;
+        }
+        #top-content {
             left: 0;
+        }
+        #bottom-content {
+            left: 100vw;
         }
         #top-content > img {
             position: absolute;
@@ -58,9 +67,9 @@
             width: 41.4%;
         }
         #graph-main {
-            left: 3.4%;
+            left: 3.439%;
             top: 77.2%;
-            width: 36.7%;
+            width: 36.76%;
         }
         #map-bkg {
             left: 43.3%;
@@ -69,20 +78,203 @@
         }
     </style>
     <script>
-        // TODO: enumeration for year
-        // TODO: fade-able image object
-        // TODO: compile coordinates for things
-        // TODO: get separate images and coordinates per county
-        // TODO: enumeration for county
-        // TODO: object for representation of counties
-        // TODO: way to crossfade text in arrow without crossfading arrow
+        const YEAR_VALUE = {
+            YEAR_1839: 1839,
+            YEAR_1843: 1843,
+            YEAR_1853: 1853,
+            YEAR_1860: 1860
+        };
+
+        var ImageGroup = function (prefix) {
+            this.images = [
+                $('#' + prefix + '-1839'),
+                $('#' + prefix + '-1843'),
+                $('#' + prefix + '-1853'),
+                $('#' + prefix + '-1860')
+            ];
+            this.currentImage = YEAR_VALUE.YEAR_1839;
+        };
+
+        ImageGroup.prototype.setImage = function(toImage, duration) {
+            if (toImage < 0 || toImage > 3 || this.currentImage == toImage) {
+                return;
+            }
+            this.images[this.currentImage].fadeOut(duration);
+            this.images[toImage].fadeIn(duration);
+            this.currentImage = toImage;
+        };
+
+        // TODO: object for red arrow animation
+        var RedArrow = function () {
+            this.textLabel = new ImageGroup("arrow-text");
+            this.container = $('#arrow-container');
+            this.coordinates = [
+                {
+                    right: "85.6%",
+                    bottom: "8%"
+                },
+                {
+                    right: "81.04%",
+                    bottom: "10.45%"
+                },
+                {
+                    right: "69.33%",
+                    bottom: "16.58%"
+                },
+                {
+                    right: "62.23%",
+                    bottom: "21.64%"
+                }
+            ];
+        };
+
+        RedArrow.prototype.setYear = function (year) {
+            if (year < 0 || year > 3 || this.textLabel.currentImage == year) {
+                return;
+            }
+            this.container.animate(this.coordinates[year], 400);
+            this.textLabel.setImage(year);
+        };
+
+        var TopManager = function () {
+            this.topText = new ImageGroup('top-text');
+            this.counties = new ImageGroup('counties');
+            this.popDensities = new ImageGroup('pop-density');
+            this.arrow = new RedArrow();
+            this.currentYear = YEAR_VALUE.YEAR_1839;
+        };
+
+        TopManager.prototype.setYear = function (year) {
+            if (year < 0 || year > 3 || this.currentYear == year) {
+                return;
+            }
+            this.currentYear = year;
+            this.topText.setImage(year, 400);
+            this.counties.setImage(year, 400);
+            this.popDensities.setImage(year, 400);
+            this.arrow.setYear(year);
+        };
+
+        function onKnobDragEnd (event, ui) {
+            var coordinateLeft = ui.position.left / document.body.scrollWidth;
+
+        }
+    </script>
+    <style>
+        .top-text {
+            position: absolute;
+            top: 5.7%;
+            width: 84.4%;
+            left: 7.8%;
+            height: auto;
+            visibility: hidden;
+        }
+        #top-text-1839 {
+            visibility: visible;
+        }
+        .counties {
+            position: absolute;
+            z-index: 1000;
+            height: auto;
+            visibility: hidden;
+        }
+        #counties-1839 {
+            top: 38.1530%;
+            left: 57.9028%;
+            width: 26.3591%;
+            visibility: visible;
+        }
+        #counties-1843 {
+            top: 38.0732%;
+            left: 57.9979%;
+            width: 30.3743%;
+        }
+        #counties-1853 {
+            top: 40.0439%;
+            left: 62.0873%;
+            width: 31.1043%;
+        }
+        #counties-1860 {
+            top: 41.7094%;
+            left: 66.9853%;
+            width: 26.2041%;
+        }
+        .arrow-text {
+            position: absolute;
+            top: 9%;
+            left: 9%;
+            width: 66.67%;
+            height: auto;
+            visibility: hidden;
+        }
+        #arrow-text-1839 {
+            visibility: visible;
+        }
+        #red-arrow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            right: 0;
+            bottom: 0;
+        }
+        #arrow-container {
+            position: absolute;
+            width: 4.255%;
+            height: 2.506%;
+            right: 85.6%;
+            bottom: 8%;
+        }
+        .pop-density {
+            position: absolute;
+            top: 77.2%;
+            left: 42%;
+            width: 24.8%;
+            height: auto;
+            visibility: hidden;
+        }
+        #pop-density-1839 {
+            visibility: visible;
+        }
+        #slider-range {
+            position: absolute;
+            left: 21.63%;
+            width: 61.24%;
+            top: 65.09%;
+            height: 2%;
+        }
+        #slider-knob {
+            position: absolute;
+            left: 21.03%;
+            height: 2%;
+            width: 3.75%;
+            top: 64.29%;
+        }
+    </style>
+    <script>
+        window.onload = function () {
+            // TODO: make everything visible
+            // TODO: start timeout timer
+
+            // TODO: initialize display manager
+            // TODO: make slider-knob draggable
+
+            // TODO: stuff for county/city map
+        };
     </script>
 </head>
 <body>
     <div id="total-content">
         <div id="top-content">
             <img id="top-title" src="../resources/main-maps-screen/title-text.png">
+            <img id="top-text-1839" class="top-text" src="../resources/main-maps-screen/1839/top-text.png">
+            <img id="top-text-1843" class="top-text" src="../resources/main-maps-screen/1843/top-text.png">
+            <img id="top-text-1853" class="top-text" src="../resources/main-maps-screen/1853/top-text.png">
+            <img id="top-text-1860" class="top-text" src="../resources/main-maps-screen/1860/top-text.png">
             <img id="map-bkg" src="../resources/main-maps-screen/il-bkg.png">
+            <img id="counties-1839" class="counties" src="../resources/main-maps-screen/1839/counties.png">
+            <img id="counties-1843" class="counties" src="../resources/main-maps-screen/1843/counties.png">
+            <img id="counties-1853" class="counties" src="../resources/main-maps-screen/1853/counties.png">
+            <img id="counties-1860" class="counties" src="../resources/main-maps-screen/1860/counties.png">
             <img id="poster" src="../resources/main-maps-screen/poster.png" onclick="onPosterClick()">
             <script>
                 function onPosterClick() {
@@ -92,12 +284,26 @@
             </script>
             <img id="pointing-hand" src="../resources/main-maps-screen/hand.png">
             <img id="time-slider" src="../resources/main-maps-screen/slider.png">
-            <!-- TODO: responsive divs with dragover defined at each tick -->
+            <div id="slider-range">
+                <!-- defines constraint for #slider-knob dragging action -->
+            </div>
+            <img id="slider-knob" src="../resources/main-maps-screen/slider-knob.png">
             <img id="graph-title" src="../resources/main-maps-screen/graph-title.png">
             <img id="graph-main" src="../resources/main-maps-screen/graph-bkg.png">
+            <div id="arrow-container">
+                <img id="red-arrow" src="../resources/main-maps-screen/red-arrow.png">
+                <img id="arrow-text-1839" class="arrow-text" src="../resources/main-maps-screen/1839/arrow-text.png">
+                <img id="arrow-text-1843" class="arrow-text" src="../resources/main-maps-screen/1843/arrow-text.png">
+                <img id="arrow-text-1853" class="arrow-text" src="../resources/main-maps-screen/1853/arrow-text.png">
+                <img id="arrow-text-1860" class="arrow-text" src="../resources/main-maps-screen/1860/arrow-text.png">
+            </div>
+            <img id="pop-density-1839" class="pop-density" src="../resources/main-maps-screen/1839/pop-density.png">
+            <img id="pop-density-1843" class="pop-density" src="../resources/main-maps-screen/1843/pop-density.png">
+            <img id="pop-density-1853" class="pop-density" src="../resources/main-maps-screen/1853/pop-density.png">
+            <img id="pop-density-1860" class="pop-density" src="../resources/main-maps-screen/1860/pop-density.png">
         </div>
         <div id="bottom-content">
-            <!-- TODO: McLean County and Bloomingtom Maps -->
+            <!-- TODO: McLean County and Bloomington Maps -->
         </div>
     </div>
 </body>
