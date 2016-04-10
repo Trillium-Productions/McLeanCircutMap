@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width height=device-height user-scalable=false">
+    <meta name="viewport" content="width=device-width height=device-height user-scalable=no">
     <title>Central Map Page</title>
     <link rel="stylesheet" href="../resources/libraries/jquery-ui.css">
     <script src="../resources/libraries/jquery-2.2.2.js"></script>
@@ -55,6 +55,7 @@
             left: 37.4%;
             top: 25.1%;
             width: 15.3%;
+            z-index: 5000;
         }
         #time-slider {
             left: 14.5%;
@@ -79,10 +80,10 @@
     </style>
     <script>
         const YEAR_VALUE = {
-            YEAR_1839: 1839,
-            YEAR_1843: 1843,
-            YEAR_1853: 1853,
-            YEAR_1860: 1860
+            YEAR_1839: 0,
+            YEAR_1843: 1,
+            YEAR_1853: 2,
+            YEAR_1860: 3
         };
 
         var ImageGroup = function (prefix) {
@@ -104,7 +105,6 @@
             this.currentImage = toImage;
         };
 
-        // TODO: object for red arrow animation
         var RedArrow = function () {
             this.textLabel = new ImageGroup("arrow-text");
             this.container = $('#arrow-container');
@@ -132,7 +132,7 @@
             if (year < 0 || year > 3 || this.textLabel.currentImage == year) {
                 return;
             }
-            this.container.animate(this.coordinates[year], 400);
+            this.container.animate(this.coordinates[year], 900);
             this.textLabel.setImage(year);
         };
 
@@ -149,15 +149,54 @@
                 return;
             }
             this.currentYear = year;
-            this.topText.setImage(year, 400);
-            this.counties.setImage(year, 400);
-            this.popDensities.setImage(year, 400);
+            this.topText.setImage(year, 900);
+            this.counties.setImage(year, 900);
+            this.popDensities.setImage(year, 900);
             this.arrow.setYear(year);
         };
 
-        function onKnobDragEnd (event, ui) {
-            var coordinateLeft = ui.position.left / document.body.scrollWidth;
+        var SlidePoint = function (xvalue, yvalue) {
+            this.x = xvalue;
+            this.y = yvalue;
+        };
 
+        SlidePoint.prototype.getDistance = function (somex, somey) {
+            const dx = this.x - somex;
+            const dy = this.y - somey;
+            return Math.sqrt((dx * dx) + (dy * dy));
+        };
+
+        SlidePoint.prototype.getProperties = function () {
+            return {
+                left: this.x + '%'
+            };
+        };
+
+        const pointsForSlider = [
+                new SlidePoint(21.28, 64.45),
+                new SlidePoint(40.64, 64.45),
+                new SlidePoint(61.07, 64.45),
+                new SlidePoint(79.36, 64.45)
+        ];
+
+        var topManager;
+
+        function onKnobDragEnd (event, ui) {
+            var placement = [
+                100 * ui.position.left / window.innerWidth,
+                100 * ui.position.top / window.innerHeight
+            ];
+            var mindist = 100;
+            var minindex = 0;
+            for (var i = 0; i < 4; i++) {
+                var distance = pointsForSlider[i].getDistance(placement[0], placement[1]);
+                if (distance < mindist) {
+                    mindist = distance;
+                    minindex = i;
+                }
+            }
+            $('#slider-knob').animate(pointsForSlider[minindex].getProperties(), 900);
+            topManager.setYear(minindex);
         }
     </script>
     <style>
@@ -167,22 +206,22 @@
             width: 84.4%;
             left: 7.8%;
             height: auto;
-            visibility: hidden;
+            display: none;
         }
         #top-text-1839 {
-            visibility: visible;
+            display: block;
         }
         .counties {
             position: absolute;
             z-index: 1000;
             height: auto;
-            visibility: hidden;
+            display: none;
         }
         #counties-1839 {
             top: 38.1530%;
             left: 57.9028%;
             width: 26.3591%;
-            visibility: visible;
+            display: block;
         }
         #counties-1843 {
             top: 38.0732%;
@@ -205,10 +244,10 @@
             left: 9%;
             width: 66.67%;
             height: auto;
-            visibility: hidden;
+            display: none;
         }
         #arrow-text-1839 {
-            visibility: visible;
+            display: block;
         }
         #red-arrow {
             position: absolute;
@@ -230,39 +269,58 @@
             left: 42%;
             width: 24.8%;
             height: auto;
-            visibility: hidden;
+            display: none;
         }
         #pop-density-1839 {
-            visibility: visible;
+            display: block;
         }
         #slider-range {
             position: absolute;
-            left: 21.63%;
-            width: 61.24%;
-            top: 65.09%;
+            left: 21.28%;
+            width: 61.83%;
+            top: 64.45%;
             height: 2%;
         }
         #slider-knob {
             position: absolute;
-            left: 21.03%;
+            left: 21.28%;
             height: 2%;
             width: 3.75%;
-            top: 64.29%;
+            top: 64.45%;
+        }
+        #nascent-cover {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(to bottom right, #a49cc1, #d99c76);
+            z-index: 10000;
         }
     </style>
     <script>
         window.onload = function () {
-            // TODO: make everything visible
+            $('#nascent-cover').fadeOut(1500);
             // TODO: start timeout timer
 
-            // TODO: initialize display manager
-            // TODO: make slider-knob draggable
+            topManager = new TopManager();
+            $('#slider-knob').draggable({
+                axis: 'x',
+                containment: '#slider-range',
+                scroll: false,
+                stop: onKnobDragEnd
+            });
 
             // TODO: stuff for county/city map
         };
+
+        var canAnimate = true;
     </script>
 </head>
 <body>
+    <div id="nascent-cover">
+        <!-- this div is simply a cover for when the page is not yet loaded -->
+    </div>
     <div id="total-content">
         <div id="top-content">
             <img id="top-title" src="../resources/main-maps-screen/title-text.png">
@@ -278,8 +336,27 @@
             <img id="poster" src="../resources/main-maps-screen/poster.png" onclick="onPosterClick()">
             <script>
                 function onPosterClick() {
-                    // TODO: animate hand back and forth
-                    // TODO: animate transition to bottom content
+                    canAnimate = false;
+                    $('#pointing-hand').animate(
+                            {
+                                left: '42.6%',
+                                top: '22.1%'
+                            },
+                            500,
+                            function (event) {
+                                $('#pointing-hand').animate(
+                                        {
+                                            left: '37.4%',
+                                            top: '25.1%'
+                                        },
+                                        500,
+                                        function (event2) {
+                                            canAnimate = true;
+                                            $('#total-content').animate({left: '-100vw'}, 900);
+                                        }
+                                );
+                            }
+                    );
                 }
             </script>
             <img id="pointing-hand" src="../resources/main-maps-screen/hand.png">
