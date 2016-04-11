@@ -10,7 +10,7 @@
             width: 100vw;
             overflow: hidden;
             margin: 0;
-            background-color: red;
+            background-color: black;
         }
         #bg-video {
             position: absolute;
@@ -148,6 +148,7 @@
 
         window.onload = function () {
             document.body.addEventListener('click', function () {
+                document.getElementById('animating-video').style.visibility = 'hidden';
                 window.location = 'mainmap.html';
             });
             performAnimations();

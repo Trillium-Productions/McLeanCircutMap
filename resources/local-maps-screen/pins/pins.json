@@ -1,0 +1,96 @@
+{
+  "total": {
+    "width": 5100,
+    "height": 8100
+  },
+  "mclean": {
+    "list": [
+      "woodford-ford",
+      "fell-house",
+      "david-davis-house",
+      "spawr-tavern"
+    ],
+    "ipsum": {
+      "left": 361,
+      "top": 789,
+      "width": 4660,
+      "height": 3773
+    },
+    "woodford-ford": {
+      "left": 1109,
+      "top": 1512,
+      "width": 97,
+      "height": 97
+    },
+    "fell-house": {
+      "left": 2043,
+      "top": 2603,
+      "width": 97,
+      "height": 97
+    },
+    "david-davis-house": {
+      "left": 2128,
+      "top": 2718,
+      "width": 90,
+      "height": 78
+    },
+    "spawr-tavern": {
+      "left": 3152,
+      "top": 1832,
+      "width": 109,
+      "height": 84
+    }
+  },
+  "bloomington": {
+    "list": [
+      "chicago-alton",
+      "fell-office",
+      "gridley-house",
+      "il-central-railroad",
+      "mclean-courthouse",
+      "pike-house"
+    ],
+    "ipsum": {
+      "left": 421,
+      "top": 4851,
+      "width": 3816,
+      "height": 2905
+    },
+    "chicago-alton": {
+      "left": 2471,
+      "top": 5647,
+      "width": 133,
+      "height": 102
+    },
+    "fell-office": {
+      "left": 2447,
+      "top": 6189,
+      "width": 115,
+      "height": 102
+    },
+    "gridley-house": {
+      "left": 2363,
+      "top": 6490,
+      "width": 132,
+      "height": 89
+    },
+    "il-central-railroad": {
+      "left": 3405,
+      "top": 6835,
+      "width": 103,
+      "height": 100
+    },
+    "mclean-courthouse": {
+      "left": 2561,
+      "top": 6186,
+      "width": 117,
+      "height": 93
+    },
+    "pike-house": {
+      "left": 2705,
+      "top": 6091,
+      "width": 119,
+      "height": 102
+    }
+  }
+}

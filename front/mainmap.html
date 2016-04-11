@@ -287,15 +287,189 @@
     </style>
     <!-- now moving to preparation for right side contents -->
     <script src="../resources/libraries/jquery.panzoom.js"></script>
+    <style>
+        #bottom-content > img {
+            position: absolute;
+        }
+        #mclean-map {
+            position: absolute;
+            left: 7.0784%;
+            top: 9.7407%;
+            width: 91.3725%;
+            height: 46.58%;
+        }
+        #mclean-map > img {
+            position: absolute;
+        }
+        #mclean-map-actual, #bloomington-map-actual, #lincolns-routes-actual {
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #woodford-ford {
+            left: 16.0515%;
+            top: 19.1625%;
+            width: 2.0815%;
+            height: auto;
+        }
+        #fell-house {
+            left: 36.0944%;
+            top: 48.0785%;
+            width: 2.0815%;
+            height: auto;
+        }
+        #david-davis-house {
+            left: 37.9185%;
+            top: 51.1264%;
+            width: 1.9313%;
+            height: auto;
+        }
+        #spawr-tavern {
+            left: 59.8927%;
+            top: 27.6438%;
+            width: 2.3391%;
+            height: auto;
+        }
+        #bloomington-map {
+            position: absolute;
+            left: 8.2549%;
+            top: 59.8889%;
+            width: 74.8235%;
+            height: 35.86%;
+        }
+        #bloomington-map > img {
+            position: absolute;
+        }
+        #chicago-alton {
+            left: 53.7212%;
+            top: 27.4010%;
+            width: 3.4853%;
+            height: auto;
+        }
+        #fell-office {
+            left: 53.0922%;
+            top: 46.0585%;
+            width: 3.0136%;
+            height: auto;
+        }
+        #gridley-house {
+            left: 50.8910%;
+            top: 56.4200%;
+            width: 3.4591%;
+            height: auto;
+        }
+        #il-central-railroad {
+            left: 78.1971%;
+            top: 68.2960%;
+            width: 2.6992%;
+            height: auto;
+        }
+        #mclean-courthouse {
+            left: 56.0797%;
+            top: 45.9552%;
+            width: 3.0660%;
+            height: auto;
+        }
+        #pike-house {
+            left: 59.8532%;
+            top: 42.6850%;
+            width: 3.1184%;
+            height: auto;
+        }
+        #bloomington-title {
+            left: 21.1%;
+            top: 56.8%;
+            width: 42.65%;
+            height: auto;
+        }
+        #mclean-title {
+            left: 3.88%;
+            top: 5.69%;
+            width: 52.43%;
+            height: auto;
+        }
+        #lincolns-routes {
+            position: absolute;
+            left: 75.14%;
+            top: 2.31%;
+            width: 21.51%;
+            height: 9.49%;
+        }
+        #lincolns-routes > img {
+            position: absolute;
+        }
+        #lr-top-pin, #lr-bottom-pin {
+            left: 6.56%;
+            width: 18.05%;
+            height: auto;
+        }
+        #lr-top-pin {
+            top: 31.47%;
+        }
+        #lr-bottom-pin {
+            top: 64.37%;
+        }
+        #back-button {
+            width: 6%;
+            right: 5%;
+            bottom: 3%;
+        }
+        #county-pointing-hand {
+            left: 64.63%;
+            top: 5.22%;
+            width: 9.65%;
+            height: auto;
+        }
+        #blue-path {
+            left: 16.87%;
+            top: 10.58%;
+            width: 56.59%;
+            height: auto;
+        }
+        #orange-path {
+            left: 12.47%;
+            top: 20.54%;
+            width: 23.91%;
+            height: auto;
+            display: none;
+        }
+        .dark-overlay {
+            position: absolute;
+            background-color: rgba(1, 1, 1, 0.8);
+            width: 100%;
+            height: 100%;
+        }
+        .popup {
+            position: absolute;
+            display: none;
+            left: 20%;
+            width: 60%;
+            top: 30%;
+        }
+    </style>
     <!-- now initializing document for both left and right -->
     <script>
+        function revertToAttractScreen() {
+            $('#nascent-cover').fadeIn(600, function () {
+                window.location = 'attract.html';
+            });
+        }
+
+        var timeoutTimer;
+
+        function resetTimer() {
+            clearInterval(timeoutTimer);
+            timeoutTimer = setInterval(revertToAttractScreen, 60000);
+        }
+
         window.onload = function () {
-            // TODO: create a timeout timer
-            addEventListener('mousedown', function (event) {
-                // TODO: reset the timeout timer
+            timeoutTimer = setInterval(revertToAttractScreen, 60000);
+            addEventListener('mousedown', function () {
+                resetTimer();
             }, false);
-            addEventListener('mouseup', function (event) {
-                // TODO: reset the timeout timer
+            addEventListener('mouseup', function () {
+                resetTimer();
             }, false);
             $('#nascent-cover').fadeOut(1500);
 
@@ -366,9 +540,105 @@
             <img id="pop-density-1853" class="pop-density" src="../resources/main-maps-screen/1853/pop-density.png">
             <img id="pop-density-1860" class="pop-density" src="../resources/main-maps-screen/1860/pop-density.png">
         </div>
+        <!-- begin local maps screen -->
+        <script>
+            var canPopup = true;
+
+            function showPopup(path) {
+                if (!canPopup) {
+                    return;
+                }
+                canPopup = false;
+                // TODO: present a transparent, dark hue over the screen
+                var shadowOverlay = document.createElement('div');
+                shadowOverlay.classList.add('dark-overlay');
+                shadowOverlay.addEventListener('click', removePopup, false);
+                shadowOverlay.id = 'thePopupOverlay';
+                var popup = document.createElement('img');
+                popup.classList.add('popup');
+                popup.src = path;
+                shadowOverlay.appendChild(popup);
+                document.getElementById('bottom-content').appendChild(shadowOverlay);
+                $('.popup').fadeIn(600);
+            }
+
+            function removePopup() {
+                $('#thePopupOverlay').remove();
+            }
+        </script>
         <div id="bottom-content">
-            <!-- TODO: McLean County and Bloomington Maps -->
-            <!-- TODO: maps with zoomaing and scrolling with panzoom.js -->
+            <div id="mclean-map">
+                <img id="mclean-map-actual" src="../resources/local-maps-screen/mclean-map.png">
+                <img id="blue-path" class="circuit-path" src="../resources/local-maps-screen/blue-path.png">
+                <img id="orange-path" class="circuit-path" src="../resources/local-maps-screen/orange-path.png">
+                <img id="woodford-ford" src="../resources/local-maps-screen/pins/woodford-ford.png"
+                    onclick="showPopup('../resources/local-maps-screen/popups/woodford-ford.png')">
+                <img id="david-davis-house" src="../resources/local-maps-screen/pins/david-davis-house.png"
+                     onclick="showPopup('../resources/local-maps-screen/popups/david-davis-house.png')">
+                <img id="spawr-tavern" src="../resources/local-maps-screen/pins/spawr-tavern.png"
+                     onclick="showPopup('../resources/local-maps-screen/popups/spawr-tavern.png')">
+                <img id="fell-house" src="../resources/local-maps-screen/pins/fell-house.png"
+                    onclick="showPopup('../resources/local-maps-screen/popups/fell-house.png')">
+            </div>
+            <div id="bloomington-map">
+                <img id="bloomington-map-actual" src="../resources/local-maps-screen/bloomington-map.png">
+                <img id="chicago-alton" src="../resources/local-maps-screen/pins/chicago-alton.png"
+                    onclick="showPopup('../resources/local-maps-screen/popups/chicago-alton.png')">
+                <img id="fell-office" src="../resources/local-maps-screen/pins/fell-office.png"
+                    onclick="showPopup('../resources/local-maps-screen/popups/fell-office.png')">
+                <img id="gridley-house" src="../resources/local-maps-screen/pins/gridley-house.png"
+                    onclick="showPopup('../resources/local-maps-screen/popups/gridley-house.png')">
+                <img id="il-central-railroad" src="../resources/local-maps-screen/pins/il-central-railroad.png"
+                    onclick="showPopup('../resources/local-maps-screen/popups/il-central-railroad.png')">
+                <img id="mclean-courthouse" src="../resources/local-maps-screen/pins/mclean-courthouse.png"
+                    onclick="showPopup('../resources/local-maps-screen/popups/mclean-courthouse.png')">
+                <img id="pike-house" src="../resources/local-maps-screen/pins/pike-house.png"
+                    onclick="showPopup('../resources/local-maps-screen/popups/pike-house.png')">
+            </div>
+            <script>
+                const RANGE_FOR_LOCAL_FIRST = true;
+                const RANGE_FOR_LOCAL_SECOND = false;
+                var rangeNow = true;
+
+                function topOfHandForRange (range) {
+                    if (range) {
+                        return '5.22%';
+                    } else {
+                        return '10%';
+                    }
+                }
+
+                function setCurrentRange (range) {
+                    if (rangeNow == range) {
+                        return;
+                    }
+                    rangeNow = range;
+                    $('#county-pointing-hand').animate({top: topOfHandForRange(range)}, 400);
+                    if (range) {
+                        $('#blue-path').fadeIn(400);
+                        $('#orange-path').fadeOut(400);
+                    } else {
+                        $('#blue-path').fadeOut(400);
+                        $('#orange-path').fadeIn(400);
+                    }
+                }
+            </script>
+            <img id="bloomington-title" src="../resources/local-maps-screen/bloomington-title.png">
+            <img id="mclean-title" src="../resources/local-maps-screen/mclean-title.png">
+            <div id="lincolns-routes">
+                <img id="lincolns-routes-actual" src="../resources/local-maps-screen/linconlns-routes.png">
+                <img id="lr-top-pin" src="../resources/local-maps-screen/key-pin.png"
+                    onclick="setCurrentRange(RANGE_FOR_LOCAL_FIRST)">
+                <img id="lr-bottom-pin" src="../resources/local-maps-screen/key-pin.png"
+                    onclick="setCurrentRange(RANGE_FOR_LOCAL_SECOND)">
+            </div>
+            <script>
+                function backToMainScreen () {
+                    $('#total-content').animate({left: 0}, 600);
+                }
+            </script>
+            <img id="back-button" src="../resources/local-maps-screen/gray-backbutton.png" onclick="backToMainScreen()">
+            <img id="county-pointing-hand" src="../resources/local-maps-screen/county-pointing-hand.png">
         </div>
     </div>
 </body>
