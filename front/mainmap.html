@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../resources/libraries/jquery-ui.css">
     <script src="../resources/libraries/jquery-2.2.2.js"></script>
     <script src="../resources/libraries/jquery-ui.js"></script>
+    <script src="../resources/libraries/jquery.ui.touch-punch.js"></script>
     <style>
         body {
             background: linear-gradient(to bottom right, #a49cc1, #d99c76);
@@ -160,42 +161,27 @@
             this.y = yvalue;
         };
 
-        SlidePoint.prototype.getDistance = function (somex, somey) {
-            const dx = this.x - somex;
-            const dy = this.y - somey;
-            return Math.sqrt((dx * dx) + (dy * dy));
-        };
-
-        SlidePoint.prototype.getProperties = function () {
-            return {
-                left: this.x + '%'
-            };
-        };
-
         const pointsForSlider = [
-                new SlidePoint(21.28, 64.45),
-                new SlidePoint(40.64, 64.45),
-                new SlidePoint(61.07, 64.45),
-                new SlidePoint(79.36, 64.45)
+                21.18,
+                40.54,
+                60.97,
+                79.26
         ];
 
         var topManager;
 
         function onKnobDragEnd (event, ui) {
-            var placement = [
-                100 * ui.position.left / window.innerWidth,
-                100 * ui.position.top / window.innerHeight
-            ];
+            var placement = 100 * ui.position.left / window.innerWidth;
             var mindist = 100;
             var minindex = 0;
             for (var i = 0; i < 4; i++) {
-                var distance = pointsForSlider[i].getDistance(placement[0], placement[1]);
+                var distance = Math.abs(placement - pointsForSlider[i]);
                 if (distance < mindist) {
                     mindist = distance;
                     minindex = i;
                 }
             }
-            $('#slider-knob').animate(pointsForSlider[minindex].getProperties(), 900);
+            $('#slider-knob').animate({left: pointsForSlider[minindex] + '%'}, 900);
             topManager.setYear(minindex);
         }
     </script>
@@ -212,6 +198,7 @@
             display: block;
         }
         .counties {
+
             position: absolute;
             z-index: 1000;
             height: auto;
@@ -234,7 +221,7 @@
             width: 31.1043%;
         }
         #counties-1860 {
-            top: 41.7094%;
+            top: 41.4094%;
             left: 66.9853%;
             width: 26.2041%;
         }
@@ -283,7 +270,7 @@
         }
         #slider-knob {
             position: absolute;
-            left: 21.28%;
+            left: 21.18%;
             height: 2%;
             width: 3.75%;
             top: 64.45%;
@@ -298,10 +285,19 @@
             z-index: 10000;
         }
     </style>
+    <!-- now moving to preparation for right side contents -->
+    <script src="../resources/libraries/jquery.panzoom.js"></script>
+    <!-- now initializing document for both left and right -->
     <script>
         window.onload = function () {
+            // TODO: create a timeout timer
+            addEventListener('mousedown', function (event) {
+                // TODO: reset the timeout timer
+            }, false);
+            addEventListener('mouseup', function (event) {
+                // TODO: reset the timeout timer
+            }, false);
             $('#nascent-cover').fadeOut(1500);
-            // TODO: start timeout timer
 
             topManager = new TopManager();
             $('#slider-knob').draggable({
@@ -337,20 +333,10 @@
             <script>
                 function onPosterClick() {
                     canAnimate = false;
-                    $('#pointing-hand').animate(
-                            {
-                                left: '42.6%',
-                                top: '22.1%'
-                            },
-                            500,
-                            function (event) {
-                                $('#pointing-hand').animate(
-                                        {
-                                            left: '37.4%',
-                                            top: '25.1%'
-                                        },
-                                        500,
-                                        function (event2) {
+                    $('#pointing-hand').animate({left: '42.6%', top: '22.1%'}, 400,
+                            function () {
+                                $('#pointing-hand').animate({left: '37.4%', top: '25.1%'}, 400,
+                                        function () {
                                             canAnimate = true;
                                             $('#total-content').animate({left: '-100vw'}, 900);
                                         }
@@ -364,6 +350,7 @@
             <div id="slider-range">
                 <!-- defines constraint for #slider-knob dragging action -->
             </div>
+            <!-- TODO: if there's time, make it so ticks can be clicked to change year -->
             <img id="slider-knob" src="../resources/main-maps-screen/slider-knob.png">
             <img id="graph-title" src="../resources/main-maps-screen/graph-title.png">
             <img id="graph-main" src="../resources/main-maps-screen/graph-bkg.png">
@@ -381,6 +368,7 @@
         </div>
         <div id="bottom-content">
             <!-- TODO: McLean County and Bloomington Maps -->
+            <!-- TODO: maps with zoomaing and scrolling with panzoom.js -->
         </div>
     </div>
 </body>
