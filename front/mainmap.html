@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width height=device-height user-scalable=no">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Central Map Page</title>
     <link rel="stylesheet" href="../resources/libraries/jquery-ui.css">
     <script src="../resources/libraries/jquery-2.2.2.js"></script>
@@ -59,7 +59,7 @@
             z-index: 5000;
         }
         #time-slider {
-            left: 14.5%;
+            left: 12.2%;
             top: 64.4%;
             width: 75.6%;
         }
@@ -162,10 +162,10 @@
         };
 
         const pointsForSlider = [
-                21.18,
-                40.54,
-                60.97,
-                79.26
+                19.085,
+                38.345,
+                58.775,
+                77.065
         ];
 
         var topManager;
@@ -184,6 +184,18 @@
             $('#slider-knob').animate({left: pointsForSlider[minindex] + '%'}, 900);
             topManager.setYear(minindex);
         }
+
+        function onTapForYearChange(minindex) {
+            if (minindex == topManager.currentYear) {
+                return;
+            }
+            $('#slider-knob').animate({left: pointsForSlider[minindex] + '%'}, 900);
+            topManager.setYear(minindex);
+        }
+
+        function turnToLittleMapsWithoutHand() {
+            $('#total-content').animate({left: '-100vw'}, 900);
+        }
     </script>
     <style>
         .top-text {
@@ -198,7 +210,6 @@
             display: block;
         }
         .counties {
-
             position: absolute;
             z-index: 1000;
             height: auto;
@@ -263,17 +274,36 @@
         }
         #slider-range {
             position: absolute;
-            left: 21.28%;
+            left: 19.085%;
             width: 61.83%;
             top: 64.45%;
             height: 2%;
         }
         #slider-knob {
             position: absolute;
-            left: 21.18%;
+            left: 19.085%;
             height: 2%;
             width: 3.75%;
             top: 64.45%;
+        }
+        .slide-tap {
+            position: absolute;
+            top: 64.45%;
+            height: 2%;
+            width: 3.75%;
+            background-color: transparent;
+        }
+        #slide-tap-1 {
+            left: 19.085%;
+        }
+        #slide-tap-2 {
+            left: 38.345%;
+        }
+        #slide-tap-3 {
+            left: 58.775%;
+        }
+        #slide-tap-4 {
+            left: 77.065%;
         }
         #nascent-cover {
             position: absolute;
@@ -308,26 +338,26 @@
             height: 100%;
         }
         #woodford-ford {
-            left: 16.0515%;
-            top: 19.1625%;
+            left: 16.5515%;
+            top: 20.1625%;
             width: 2.0815%;
             height: auto;
         }
         #fell-house {
-            left: 36.0944%;
-            top: 48.0785%;
+            left: 37.0944%;
+            top: 49.5785%;
             width: 2.0815%;
             height: auto;
         }
         #david-davis-house {
             left: 37.9185%;
-            top: 51.1264%;
+            top: 52.6264%;
             width: 1.9313%;
             height: auto;
         }
         #spawr-tavern {
-            left: 59.8927%;
-            top: 27.6438%;
+            left: 60.3927%;
+            top: 29.1438%;
             width: 2.3391%;
             height: auto;
         }
@@ -404,14 +434,21 @@
             width: 18.05%;
             height: auto;
         }
-        #lr-top-pin {
+        #lr-top-pin, #lr-touch-div-top {
             top: 31.47%;
         }
-        #lr-bottom-pin {
+        #lr-bottom-pin, #lr-touch-div-bottom {
             top: 64.37%;
         }
+        .lr-touch-div {
+            position: absolute;
+            left: 0%;
+            width: 100%;
+            background-color: transparent;
+            height: 29.9%;
+        }
         #back-button {
-            width: 6%;
+            width: 10%;
             right: 5%;
             bottom: 3%;
         }
@@ -422,30 +459,46 @@
             height: auto;
         }
         #blue-path {
-            left: 16.87%;
-            top: 10.58%;
+            left: 17.37%;
+            top: 11.58%;
             width: 56.59%;
             height: auto;
         }
         #orange-path {
-            left: 12.47%;
-            top: 20.54%;
+            left: 12.97%;
+            top: 21.04%;
             width: 23.91%;
             height: auto;
             display: none;
         }
         .dark-overlay {
             position: absolute;
+            display: none;
             background-color: rgba(1, 1, 1, 0.8);
             width: 100%;
             height: 100%;
         }
         .popup {
             position: absolute;
+            background-color: transparent;
             display: none;
             left: 20%;
             width: 60%;
             top: 30%;
+        }
+        .popup-image {
+            display: none;
+            width: 100%;
+            height: 100%;
+            left: 0%;
+            top: 0%;
+        }
+        .exit-x {
+            position: absolute;
+            display: none;
+            right: 1.5%;
+            top: 1.5%;
+            width: 9%;
         }
     </style>
     <!-- now initializing document for both left and right -->
@@ -463,14 +516,19 @@
             timeoutTimer = setInterval(revertToAttractScreen, 60000);
         }
 
+        const PanningZoomingSettings = {
+            minScale: 1, maxScale: 3, constrain: true, easing: 'ease-in-out',
+            onPan: resetTimer(), onZoom: resetTimer(), increment: 0.1
+        };
+
         window.onload = function () {
             timeoutTimer = setInterval(revertToAttractScreen, 60000);
             addEventListener('mousedown', function () {
                 resetTimer();
-            }, false);
+            }, true);
             addEventListener('mouseup', function () {
                 resetTimer();
-            }, false);
+            }, true);
             $('#nascent-cover').fadeOut(1500);
 
             topManager = new TopManager();
@@ -480,10 +538,11 @@
                 scroll: false,
                 stop: onKnobDragEnd
             });
-
-            // TODO: stuff for county/city map
+            $('.panzoomable').panzoom(PanningZoomingSettings);
+            $('.panres').on('mousedown touchstart', function (event) {
+                event.stopImmediatePropagation();
+            });
         };
-
         var canAnimate = true;
     </script>
 </head>
@@ -499,10 +558,14 @@
             <img id="top-text-1853" class="top-text" src="../resources/main-maps-screen/1853/top-text.png">
             <img id="top-text-1860" class="top-text" src="../resources/main-maps-screen/1860/top-text.png">
             <img id="map-bkg" src="../resources/main-maps-screen/il-bkg.png">
-            <img id="counties-1839" class="counties" src="../resources/main-maps-screen/1839/counties.png">
-            <img id="counties-1843" class="counties" src="../resources/main-maps-screen/1843/counties.png">
-            <img id="counties-1853" class="counties" src="../resources/main-maps-screen/1853/counties.png">
-            <img id="counties-1860" class="counties" src="../resources/main-maps-screen/1860/counties.png">
+            <img id="counties-1839" class="counties" src="../resources/main-maps-screen/1839/counties.png"
+                onclick="turnToLittleMapsWithoutHand()">
+            <img id="counties-1843" class="counties" src="../resources/main-maps-screen/1843/counties.png"
+                onclick="turnToLittleMapsWithoutHand()">
+            <img id="counties-1853" class="counties" src="../resources/main-maps-screen/1853/counties.png"
+                onclick="turnToLittleMapsWithoutHand()">
+            <img id="counties-1860" class="counties" src="../resources/main-maps-screen/1860/counties.png"
+                onclick="turnToLittleMapsWithoutHand()">
             <img id="poster" src="../resources/main-maps-screen/poster.png" onclick="onPosterClick()">
             <script>
                 function onPosterClick() {
@@ -524,7 +587,10 @@
             <div id="slider-range">
                 <!-- defines constraint for #slider-knob dragging action -->
             </div>
-            <!-- TODO: if there's time, make it so ticks can be clicked to change year -->
+            <div id="slide-tap-1" class="slide-tap" onclick="onTapForYearChange(0)"></div>
+            <div id="slide-tap-2" class="slide-tap" onclick="onTapForYearChange(1)"></div>
+            <div id="slide-tap-3" class="slide-tap" onclick="onTapForYearChange(2)"></div>
+            <div id="slide-tap-4" class="slide-tap" onclick="onTapForYearChange(3)"></div>
             <img id="slider-knob" src="../resources/main-maps-screen/slider-knob.png">
             <img id="graph-title" src="../resources/main-maps-screen/graph-title.png">
             <img id="graph-main" src="../resources/main-maps-screen/graph-bkg.png">
@@ -549,51 +615,64 @@
                     return;
                 }
                 canPopup = false;
-                // TODO: present a transparent, dark hue over the screen
                 var shadowOverlay = document.createElement('div');
                 shadowOverlay.classList.add('dark-overlay');
-                shadowOverlay.addEventListener('click', removePopup, false);
                 shadowOverlay.id = 'thePopupOverlay';
+                var pholder = document.createElement('div');
+                pholder.classList.add('popup');
                 var popup = document.createElement('img');
-                popup.classList.add('popup');
+                popup.classList.add('popup-image');
                 popup.src = path;
-                shadowOverlay.appendChild(popup);
+                pholder.appendChild(popup);
+                var xbutton = document.createElement('img');
+                xbutton.classList.add('exit-x');
+                xbutton.src = '../resources/local-maps-screen/exit.png';
+                $(xbutton).on('mousedown touchstart', function (event) {
+                    event.stopImmediatePropagation();
+                });
+                xbutton.addEventListener('click', removePopup, true);
+                pholder.appendChild(xbutton);
+                shadowOverlay.appendChild(pholder);
                 document.getElementById('bottom-content').appendChild(shadowOverlay);
+                $('.dark-overlay').fadeIn(600);
                 $('.popup').fadeIn(600);
+                $('.popup-image').fadeIn(600);
+                $('.exit-x').fadeIn(600);
+                $('.popup').panzoom(PanningZoomingSettings);
             }
 
             function removePopup() {
-                $('#thePopupOverlay').remove();
+                $('#thePopupOverlay').remove().removeData();
                 canPopup = true;
             }
         </script>
         <div id="bottom-content">
-            <div id="mclean-map">
+            <div id="mclean-map" class="panzoomable">
                 <img id="mclean-map-actual" src="../resources/local-maps-screen/mclean-map.png">
                 <img id="blue-path" class="circuit-path" src="../resources/local-maps-screen/blue-path.png">
                 <img id="orange-path" class="circuit-path" src="../resources/local-maps-screen/orange-path.png">
-                <img id="woodford-ford" src="../resources/local-maps-screen/pins/woodford-ford.png"
+                <img id="woodford-ford" src="../resources/main-maps-screen/slider-knob.png" class="panres"
                     onclick="showPopup('../resources/local-maps-screen/popups/woodford-ford.png')">
-                <img id="david-davis-house" src="../resources/local-maps-screen/pins/david-davis-house.png"
+                <img id="david-davis-house" src="../resources/main-maps-screen/slider-knob.png" class="panres"
                      onclick="showPopup('../resources/local-maps-screen/popups/david-davis-house.png')">
-                <img id="spawr-tavern" src="../resources/local-maps-screen/pins/spawr-tavern.png"
+                <img id="spawr-tavern" src="../resources/main-maps-screen/slider-knob.png" class="panres"
                      onclick="showPopup('../resources/local-maps-screen/popups/spawr-tavern.png')">
-                <img id="fell-house" src="../resources/local-maps-screen/pins/fell-house.png"
+                <img id="fell-house" src="../resources/main-maps-screen/slider-knob.png" class="panres"
                     onclick="showPopup('../resources/local-maps-screen/popups/fell-house.png')">
             </div>
-            <div id="bloomington-map">
+            <div id="bloomington-map" class="panzoomable">
                 <img id="bloomington-map-actual" src="../resources/local-maps-screen/bloomington-map.png">
-                <img id="chicago-alton" src="../resources/local-maps-screen/pins/chicago-alton.png"
+                <img id="chicago-alton" src="../resources/main-maps-screen/slider-knob.png" class="panres"
                     onclick="showPopup('../resources/local-maps-screen/popups/chicago-alton.png')">
-                <img id="fell-office" src="../resources/local-maps-screen/pins/fell-office.png"
+                <img id="fell-office" src="../resources/main-maps-screen/slider-knob.png" class="panres"
                     onclick="showPopup('../resources/local-maps-screen/popups/fell-office.png')">
-                <img id="gridley-house" src="../resources/local-maps-screen/pins/gridley-house.png"
+                <img id="gridley-house" src="../resources/main-maps-screen/slider-knob.png" class="panres"
                     onclick="showPopup('../resources/local-maps-screen/popups/gridley-house.png')">
-                <img id="il-central-railroad" src="../resources/local-maps-screen/pins/il-central-railroad.png"
+                <img id="il-central-railroad" src="../resources/main-maps-screen/slider-knob.png" class="panres"
                     onclick="showPopup('../resources/local-maps-screen/popups/il-central-railroad.png')">
-                <img id="mclean-courthouse" src="../resources/local-maps-screen/pins/mclean-courthouse.png"
+                <img id="mclean-courthouse" src="../resources/main-maps-screen/slider-knob.png" class="panres"
                     onclick="showPopup('../resources/local-maps-screen/popups/mclean-courthouse.png')">
-                <img id="pike-house" src="../resources/local-maps-screen/pins/pike-house.png"
+                <img id="pike-house" src="../resources/main-maps-screen/slider-knob.png" class="panres"
                     onclick="showPopup('../resources/local-maps-screen/popups/pike-house.png')">
             </div>
             <script>
@@ -628,10 +707,10 @@
             <img id="mclean-title" src="../resources/local-maps-screen/mclean-title.png">
             <div id="lincolns-routes">
                 <img id="lincolns-routes-actual" src="../resources/local-maps-screen/linconlns-routes.png">
-                <img id="lr-top-pin" src="../resources/local-maps-screen/key-pin.png"
-                    onclick="setCurrentRange(RANGE_FOR_LOCAL_FIRST)">
-                <img id="lr-bottom-pin" src="../resources/local-maps-screen/key-pin.png"
-                    onclick="setCurrentRange(RANGE_FOR_LOCAL_SECOND)">
+                <img id="lr-top-pin" src="../resources/local-maps-screen/key-pin.png">
+                <img id="lr-bottom-pin" src="../resources/local-maps-screen/key-pin.png">
+                <div id="lr-touch-div-top" class="lr-touch-div" onclick="setCurrentRange(RANGE_FOR_LOCAL_FIRST)"></div>
+                <div id="lr-touch-div-bottom" class="lr-touch-div" onclick="setCurrentRange(RANGE_FOR_LOCAL_SECOND)"></div>
             </div>
             <script>
                 function backToMainScreen () {
