@@ -518,7 +518,7 @@
 
         const PanningZoomingSettings = {
             minScale: 1, maxScale: 3, constrain: true, easing: 'ease-in-out',
-            onPan: resetTimer(), onZoom: resetTimer(), increment: 0.1
+            onPan: resetTimer, onZoom: resetTimer, increment: 0.1
         };
 
         window.onload = function () {
